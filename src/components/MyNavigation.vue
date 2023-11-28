@@ -7,6 +7,7 @@
     <ul id="my-navigation__links">
       <RouterLink to="/">Home</RouterLink>
       <RouterLink to="/about">About</RouterLink>
+      <RouterLink to="/new">New</RouterLink>
     </ul>
   </nav>
 </template>
