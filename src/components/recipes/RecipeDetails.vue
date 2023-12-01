@@ -17,14 +17,47 @@
 			<fieldset id="allergen-list">
 				<legend>Allergens</legend>
 				<div v-for="allergen in allergenOptions" :key="allergen.key" class="allergen">
-					<input :id="allergen.label" type="checkbox" v-model="allergens[allergen.key]" />
+					<input :id="allergen.label" type="checkbox" :value="allergen.key" v-model="allergens" />
 					<label :for="allergen.label">{{ allergen.label }}</label>
 				</div>
 			</fieldset>
+
+			<fieldset id="ingredients">
+				<legend>Ingredients Input</legend>
+				<ul>
+					<li v-for="(ingredient, index) in ingredients" :key="ingredient.key" class="ingredient">
+						<fieldset>
+							<legend>Ingredient #{{ index + 1 }}</legend>
+							<div class="ingredient-size">
+								<label for="amount">Amount</label>
+								<input id="amount" type="number" v-model="ingredient.amount" min="0" />
+								<select v-model="ingredient.measurement" required>
+									<option v-for="measurement in measurementOptions" :value="measurement" :key="measurement"
+										class="measurement">
+										{{ measurement }}
+									</option>
+								</select>
+							</div>
+							<div>
+								<label for="ingredient">Ingredient Name</label>
+								<input id="ingredient" type="text" v-model="ingredient.value" />
+							</div>
+						</fieldset>
+
+						<!-- measurements, sizes and name -->
+
+					</li>
+					<button @click="addIngredient">ADD ME</button>
+				</ul>
+			</fieldset>
 		</form>
+
 		<p>name: {{ name }}</p>
 		<p>details: {{ details }}</p>
 		<p>type: {{ type }}</p>
+		<p>allergens: {{ allergens }} </p>
+		<p>ingredients: {{ ingredients }}</p>
+
 	</article>
 </template>
 
@@ -36,10 +69,14 @@ export default {
 			name: '',
 			details: '',
 			type: '',
-			allergens: {
-				nuts: '',
-				eggs: '',
-			}
+			allergens: [],
+			ingredients: [{ amount: null, measurement: null, ingredient: null }],
+		}
+	},
+	methods: {
+		addIngredient() {
+			const ingredient = { amount: null, measurement: null, ingredient: null }
+			this.ingredients.push(ingredient)
 		}
 	},
 	computed: {
@@ -47,6 +84,16 @@ export default {
 			const options = [
 				{ label: 'Nuts', key: 'nuts' },
 				{ label: 'Eggs', key: 'eggs' },
+				{ label: 'Fish', key: 'fish' },
+				{ label: 'Lactose', key: 'lactose' },
+				{ label: 'Test', key: 'test' },
+				{ label: 'Test2', key: 'test2' },
+			]
+			return options
+		},
+		measurementOptions() {
+			const options = [
+				'tbsp', 'tsp', 'fl.oz', 'cup', 'ml', 'lb', 'g', 'kg', 'l',
 			]
 			return options
 		}
@@ -82,6 +129,23 @@ export default {
 		border: none;
 		border-bottom: 1px solid #ddd;
 		color: #555;
+	}
+
+	.ingredient-size {
+		display: flex;
+		flex-wrap: wrap;
+
+		&>* {
+			flex: 50%;
+		}
+
+		label {
+			flex: 100%;
+		}
+	}
+
+	.ingredient {
+		list-style: none;
 	}
 
 	#allergen-list {
