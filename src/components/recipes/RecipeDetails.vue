@@ -56,7 +56,6 @@
 				<button type="submit">Submit Recipe</button>
 			</div>
 		</form>
-
 	</article>
 </template>
 
