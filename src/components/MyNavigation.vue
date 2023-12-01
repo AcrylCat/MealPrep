@@ -7,7 +7,8 @@
     <ul id="my-navigation__links">
       <RouterLink to="/">Home</RouterLink>
       <RouterLink to="/about">About</RouterLink>
-      <RouterLink to="/new">New</RouterLink>
+      <RouterLink to="/recipe/new">New</RouterLink>
+      <RouterLink to="/recipes">Recipes</RouterLink>
     </ul>
   </nav>
 </template>
@@ -33,12 +34,14 @@ $gap: 0.5rem;
     font-size: 2rem;
     align-items: center;
   }
+
   &,
   &__links {
     gap: $gap;
     padding: 0;
     display: flex;
     align-items: center;
+
     @media (min-width: 1024px) {
       flex-direction: column;
     }

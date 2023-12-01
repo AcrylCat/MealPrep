@@ -1,15 +1,16 @@
 <template>
 	<article id="recipe-details">
 		<h2>Recipe Details</h2>
-		<form>
+		<form @submit.prevent="handleSubmit">
 			<label>Recipe Name:</label>
-			<input type="text" required v-model="name" />
+			<input type="text" required v-model="item.name" />
 
 			<label>Short Description:</label>
-			<input type="text" required v-model="details" />
+			<input type="text" required v-model="item.details" />
 
 			<label>Type</label>
-			<select v-model="type" required>
+			<select v-model="item.type" placeholder="Select Recipe Type" required>
+				<option value="" selected disabled hidden>Select Type</option>
 				<option value="Main Recipe">Main Recipe</option>
 				<option value="Prepped Ingredient">Prepped Ingredient</option>
 			</select>
@@ -17,21 +18,22 @@
 			<fieldset id="allergen-list">
 				<legend>Allergens</legend>
 				<div v-for="allergen in allergenOptions" :key="allergen.key" class="allergen">
-					<input :id="allergen.label" type="checkbox" :value="allergen.key" v-model="allergens" />
+					<input :id="allergen.label" type="checkbox" :value="allergen.key" v-model="item.allergens" />
 					<label :for="allergen.label">{{ allergen.label }}</label>
 				</div>
 			</fieldset>
 
 			<fieldset id="ingredients">
-				<legend>Ingredients Input</legend>
+				<legend>Ingredients list</legend>
 				<ul>
-					<li v-for="(ingredient, index) in ingredients" :key="ingredient.key" class="ingredient">
+					<li v-for="(ingredient, index) in item.ingredients" :key="ingredient.key" class="ingredient">
 						<fieldset>
 							<legend>Ingredient #{{ index + 1 }}</legend>
 							<div class="ingredient-size">
 								<label for="amount">Amount</label>
 								<input id="amount" type="number" v-model="ingredient.amount" min="0" />
 								<select v-model="ingredient.measurement" required>
+									<option value="" selected disabled hidden>Select</option>
 									<option v-for="measurement in measurementOptions" :value="measurement" :key="measurement"
 										class="measurement">
 										{{ measurement }}
@@ -39,7 +41,7 @@
 								</select>
 							</div>
 							<div>
-								<label for="ingredient">Ingredient Name</label>
+								<label for="ingredient">Item Name</label>
 								<input id="ingredient" type="text" v-model="ingredient.value" />
 							</div>
 						</fieldset>
@@ -47,49 +49,85 @@
 						<!-- measurements, sizes and name -->
 
 					</li>
-					<button @click="addIngredient">ADD ME</button>
+					<button type="button" @click="addIngredient">Add Item</button>
 				</ul>
 			</fieldset>
+			<div class="submit">
+				<button type="submit">Submit Recipe</button>
+			</div>
 		</form>
 
-		<p>name: {{ name }}</p>
-		<p>details: {{ details }}</p>
-		<p>type: {{ type }}</p>
-		<p>allergens: {{ allergens }} </p>
-		<p>ingredients: {{ ingredients }}</p>
+		<p>name: {{ item.name }}</p>
+		<p>details: {{ item.details }}</p>
+		<p>type: {{ item.type }}</p>
+		<p>allergens: {{ item.allergens }} </p>
+		<p>ingredients: {{ item.ingredients }}</p>
 
 	</article>
 </template>
 
 <script>
+import axios from 'axios';
+
+const defaultItem = {
+	name: '',
+	details: '',
+	type: '',
+	allergens: [],
+	ingredients: [{ amount: null, measurement: '', ingredient: '' }],
+}
+
 export default {
 	name: 'RecipeDetails',
 	data() {
 		return {
-			name: '',
-			details: '',
-			type: '',
-			allergens: [],
-			ingredients: [{ amount: null, measurement: null, ingredient: null }],
+			item: { ...defaultItem },
+			ALLERGENS: [],
+			recipes: []
+		}
+	},
+	watch: {
+		recipes: {
+			deep: true,
+			handler(data) {
+				console.log('watch')
+				localStorage.setItem('recipes', JSON.stringify(data))
+			}
 		}
 	},
 	methods: {
 		addIngredient() {
-			const ingredient = { amount: null, measurement: null, ingredient: null }
-			this.ingredients.push(ingredient)
+			const ingredient = { amount: 0, measurement: '', ingredient: '' }
+			this.item.ingredients.push(ingredient)
+		},
+		handleSubmit() {
+			console.log('form submitted', this.item)
+			this.recipes.push({ id: this.recipes.length + 1, ...this.item })
+		},
+		restoreItem() {
+			this.item = this.recipes.find(({ id }) => id === this.$route.params.id) || defaultItem;
 		}
+	},
+	mounted() {
+		console.log('App Mounted');
+		if (localStorage.getItem('recipes')) {
+			this.recipes = JSON.parse(localStorage.getItem('recipes'));
+		}
+
+		return axios.get('https://static.openfoodfacts.org/data/taxonomies/allergens.json')
+			.then(({ data }) => {
+				this.ALLERGENS = data;
+			})
+			.then(() => this.restoreItem())
+			.catch((err) => console.error(err))
 	},
 	computed: {
 		allergenOptions() {
-			const options = [
-				{ label: 'Nuts', key: 'nuts' },
-				{ label: 'Eggs', key: 'eggs' },
-				{ label: 'Fish', key: 'fish' },
-				{ label: 'Lactose', key: 'lactose' },
-				{ label: 'Test', key: 'test' },
-				{ label: 'Test2', key: 'test2' },
-			]
-			return options
+			return Object.keys(this.ALLERGENS).map((item) => {
+				const [lang, key] = item.split(':');
+				const { name } = this.ALLERGENS[item];
+				return { label: name[lang], key };
+			})
 		},
 		measurementOptions() {
 			const options = [
@@ -103,12 +141,17 @@ export default {
 <style lang="scss" scoped>
 #recipe-details {
 	form {
-		max-width: 420px;
 		margin: 30px auto;
 		background: white;
 		text-align: left;
-		padding: 40px;
 		border-radius: 10px;
+		width: 100%;
+
+		@media (min-width: 680px) {
+			max-width: 500px;
+			padding: 40px;
+
+		}
 	}
 
 	label {
@@ -118,6 +161,7 @@ export default {
 		text-transform: uppercase;
 		letter-spacing: 1px;
 		font-weight: bold;
+		text-wrap: nowrap;
 	}
 
 	input,
@@ -147,6 +191,19 @@ export default {
 	.ingredient {
 		list-style: none;
 	}
+
+	.submit {
+		text-align: center;
+	}
+
+	#ingredients ul {
+		padding: 0;
+
+		@media (min-width: 680px) {
+			padding: 16px;
+		}
+	}
+
 
 	#allergen-list {
 		margin-top: 1rem;
