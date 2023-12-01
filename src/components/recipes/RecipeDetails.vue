@@ -86,6 +86,12 @@ export default {
 			recipes: []
 		}
 	},
+	props: {
+		isNew: {
+			type: Boolean,
+			default: false,
+		}
+	},
 	watch: {
 		recipes: {
 			deep: true,
@@ -102,10 +108,24 @@ export default {
 		},
 		handleSubmit() {
 			console.log('form submitted', this.item)
-			this.recipes.push({ id: this.recipes.length + 1, ...this.item })
+			const id = this.recipes.length + 1;
+			if (this.isNew) {
+				this.recipes.push({ id, ...this.item })
+				this.$router.push(`/recipes/${id}`);
+			} else {
+				const index = this.recipes.findIndex((item) => item.id === this.item.id);
+				if (index > -1) {
+					this.recipes[index] = { ...this.item };
+				}
+			}
 		},
 		restoreItem() {
-			this.item = this.recipes.find(({ id }) => id === this.$route.params.id) || defaultItem;
+			const id = this.$route.params.id;
+			if (this.isNew || id === 'new') {
+				this.item = defaultItem;
+			} else {
+				this.item = { ...defaultItem, ...(this.recipes.find((item) => Number(item.id) === Number(id)) || {}) }
+			}
 		}
 	},
 	mounted() {

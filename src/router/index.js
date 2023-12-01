@@ -9,21 +9,24 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: RecipeList
     },
     {
-      path: '/recipe/new',
+      path: '/recipes/new',
       name: 'new',
+      props: {
+        isNew: true,
+      },
       component: RecipeDetails
     },
     {
-      path: '/recipe/:id',
+      path: '/recipes/:id',
       name: 'recipe',
       component: RecipeDetails
     },
     {
       path: '/recipes',
-      name: 'recipe',
+      name: 'recipes',
       component: RecipeList
     },
     {

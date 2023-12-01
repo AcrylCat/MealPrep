@@ -7,8 +7,8 @@
     <ul id="my-navigation__links">
       <RouterLink to="/">Home</RouterLink>
       <RouterLink to="/about">About</RouterLink>
-      <RouterLink to="/recipe/new">New</RouterLink>
-      <RouterLink to="/recipes">Recipes</RouterLink>
+      <RouterLink to="/recipes/new">New</RouterLink>
+      <!-- <RouterLink to="/recipes">Recipes</RouterLink> -->
     </ul>
   </nav>
 </template>
