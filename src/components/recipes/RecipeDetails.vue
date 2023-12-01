@@ -57,12 +57,6 @@
 			</div>
 		</form>
 
-		<p>name: {{ item.name }}</p>
-		<p>details: {{ item.details }}</p>
-		<p>type: {{ item.type }}</p>
-		<p>allergens: {{ item.allergens }} </p>
-		<p>ingredients: {{ item.ingredients }}</p>
-
 	</article>
 </template>
 
