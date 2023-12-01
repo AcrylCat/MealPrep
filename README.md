@@ -1,41 +1,23 @@
-# recipe-calculator
+Instructions:
 
-This template should help get you started developing with Vue 3 in Vite.
+NPM & node.js needed
 
-## Recommended IDE Setup
+Clone project on Visual Studio Code or optionally run prompts on GitBash to clone:
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+git clone https://GitHub.com/AcrylCat/MealPrep cd MealPrep npm install
 
-## Customize configuration
+Make sure npm is installed to run application. Make sure node.js is installed to run application.
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+Web Development Capstone Features:
 
-## Project Setup
+"Use arrays, objects, sets or maps to store and retrieve information that is displayed in your app."
 
-```sh
-npm install
-```
+- Application has an array for ingredients, measurements, and allergens within the submit form for a recipe.
 
-### Compile and Hot-Reload for Development
+"Analyze data that is stored in arrays, objects, sets or maps and display information about it in your app."
 
-```sh
-npm run dev
-```
+- display stored recipes
 
-### Compile and Minify for Production
+"Retrieve data from a third-party API and use it to display something within your app."
 
-```sh
-npm run build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-npm run test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+- The app uses a package.json API to retrieve most common allergens to be linked to a recipe.
